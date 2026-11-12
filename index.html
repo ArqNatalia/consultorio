@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d13">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Consultorio Bendiciones</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#0b0d13;--ink:#f3f1fa;--ink2:#c9c6d8;--muted:#8e93a6;--line:rgba(255,255,255,.1);--pink:#f7b3cd;--blue:#a8d4f7;--lilac:#cbb8f7;--aqua:#94e6d2;--bad:#f7a8b4;--on:#16131f;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+#lock{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px calc(32px + env(safe-area-inset-bottom));text-align:center;position:relative;overflow:hidden}
+#lock::before{content:"";position:absolute;inset:-30%;background:radial-gradient(40% 35% at 30% 30%,rgba(247,179,205,.22),transparent 70%),radial-gradient(40% 35% at 75% 40%,rgba(168,212,247,.2),transparent 70%),radial-gradient(45% 40% at 50% 85%,rgba(203,184,247,.18),transparent 70%);filter:blur(10px);z-index:0}
+#lock>*{position:relative;z-index:1}
+.dogs{display:flex;gap:0;margin-bottom:18px}
+.dogs img{width:96px;height:96px;border-radius:50%;object-fit:cover;background:#1d2230;border:3px solid var(--bg)}
+.dogs img+img{margin-left:-22px}
+h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}
+.sub{color:var(--ink2);margin:0 0 30px;font-size:15px;max-width:320px;line-height:1.45}
+.fp{width:112px;height:112px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--pink),var(--lilac) 55%,var(--blue));color:var(--on);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 40px rgba(203,184,247,.35);transition:transform .15s}
+.fp:active{transform:scale(.95)}
+.fp svg{width:58px;height:58px}
+.fp-label{margin-top:14px;font-weight:700;font-size:16px}
+.msg{margin-top:22px;max-width:330px;font-size:14px;line-height:1.5;color:var(--ink2);min-height:1.5em}
+.msg.err{color:var(--bad)}
+.msg.ok{color:var(--aqua)}
+.small{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom));left:0;right:0;font-size:12px;color:var(--muted)}
+.small button{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;padding:6px}
+#view{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg);display:none}
+body.open #lock{display:none}
+body.open #view{display:block}
+.spin{width:22px;height:22px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--ink);border-radius:50%;animation:s 1s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<main id="lock">
+  <div class="dogs"><img src="img/rolo.webp" alt="Rolo"><img src="img/mateo.webp" alt="Mateo"></div>
+  <h1 id="title">Consultorio</h1>
+  <p class="sub" id="sub">Rolo y Mateo</p>
+  <button class="fp" id="fp" type="button" aria-label="Abrir con huella">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 11v3.5c0 2.2-.6 4.2-1.7 6"/><path d="M8.6 9.4A3.9 3.9 0 0 1 15.9 11v2.4c0 2.6-.5 5-1.5 7.1"/><path d="M5.4 16.6c.4-1 .6-2.1.6-3.2V11a6 6 0 0 1 10-4.5"/><path d="M18 8.6c.6.7 1 1.5 1.1 2.4v2.3c0 1.1-.1 2.2-.3 3.2"/><path d="M3.4 8.5A9 9 0 0 1 18.8 4.9"/><path d="M8.3 20.3c.7-1.5 1.1-3.2 1.1-5V11a2.6 2.6 0 0 1 4.6-1.7"/></svg>
+  </button>
+  <div class="fp-label" id="fplabel">Abrir con huella</div>
+  <div class="msg" id="msg" role="status"></div>
+  <div class="small" id="small"></div>
+</main>
+<iframe id="view" title="Consultorio"></iframe>
+<script>
+"use strict";
+const PAGES={inicio:"data/consultorio.enc",vacunas:"data/vacunas.enc",manual:"data/manual.enc",comida:"data/comida.enc"};
+const CFG="cx-config-v1";
+const LOCK_AFTER_MS=5*60*1000;
+const $=id=>document.getElementById(id);
+const enc=new TextEncoder(), dec=new TextDecoder();
+const b64e=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+const b64d=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
+let KEY=null, hiddenAt=0;
+const cache={};
+
+function say(t,cls){const m=$("msg");m.className="msg"+(cls?" "+cls:"");m.innerHTML=t;}
+function busy(on){$("fp").disabled=on;$("fp").style.opacity=on?.6:1;}
+function getCfg(){try{return JSON.parse(localStorage.getItem(CFG)||"null");}catch(e){return null;}}
+function setCfg(c){localStorage.setItem(CFG,JSON.stringify(c));}
+
+async function importContentKey(raw){return crypto.subtle.importKey("raw",raw,"AES-GCM",false,["decrypt"]);}
+async function wrapKeyFromPrf(prfOut){
+  const base=await crypto.subtle.importKey("raw",prfOut,"HKDF",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"HKDF",hash:"SHA-256",salt:new Uint8Array(32),info:enc.encode("consultorio-llave-v1")},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+}
+async function fetchPage(name){
+  const r=await fetch(PAGES[name],{cache:"no-cache"});
+  if(!r.ok) throw new Error("No se pudo descargar ("+r.status+")");
+  return r.json();
+}
+async function decryptPage(key,name){
+  const p=await fetchPage(name);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64d(p.iv)},key,b64d(p.ct));
+  return dec.decode(pt);
+}
+function rnd(n){return crypto.getRandomValues(new Uint8Array(n));}
+function prfFirst(cred){const x=cred.getClientExtensionResults&&cred.getClientExtensionResults();return x&&x.prf&&x.prf.results&&x.prf.results.first;}
+async function assertion(id,salt){
+  const opts={publicKey:{challenge:rnd(32),rpId:location.hostname,allowCredentials:[{type:"public-key",id:b64d(id)}],userVerification:"required",timeout:60000}};
+  if(salt) opts.publicKey.extensions={prf:{eval:{first:b64d(salt)}}};
+  return navigator.credentials.get(opts);
+}
+
+/* ---------- Configuración (primera vez en este celular) ---------- */
+async function setup(rawKey){
+  busy(true);
+  try{
+    if(!window.PublicKeyCredential) throw new Error("Este navegador no permite usar la huella. Abre el enlace en Google Chrome.");
+    say('<span class="spin"></span> Comprobando la llave…');
+    const key=await importContentKey(rawKey);
+    try{await decryptPage(key,"inicio");}catch(e){throw new Error("Este enlace de configuración no sirve o ya fue cambiado. Pídele a Natalia el enlace nuevo.");}
+    say("Pon tu dedo en el lector cuando el celular lo pida.");
+    const salt=rnd(32);
+    const cred=await navigator.credentials.create({publicKey:{
+      rp:{name:"Consultorio Bendiciones",id:location.hostname},
+      user:{id:rnd(16),name:"Consultorio Bendiciones",displayName:"Consultorio Bendiciones"},
+      challenge:rnd(32),
+      pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:"platform",residentKey:"required",userVerification:"required"},
+      timeout:90000,
+      extensions:{prf:{eval:{first:salt}}}
+    }});
+    const id=b64e(cred.rawId);
+    const ext=cred.getClientExtensionResults?cred.getClientExtensionResults():{};
+    let out=prfFirst(cred);
+    if(!out && ext.prf && ext.prf.enabled!==false){
+      say("Listo. Una vez más: pon el dedo para terminar.");
+      try{out=prfFirst(await assertion(id,b64e(salt)));}catch(e){out=null;}
+    }
+    if(out){
+      const wk=await wrapKeyFromPrf(out);
+      const iv=rnd(12);
+      const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},wk,rawKey);
+      setCfg({mode:"huella",id,salt:b64e(salt),iv:b64e(iv),ct:b64e(ct),at:new Date().toISOString()});
+    }else{
+      setCfg({mode:"basico",id,k:b64e(rawKey),at:new Date().toISOString()});
+    }
+    history.replaceState(null,"",location.pathname);
+    KEY=key;
+    say(out?"¡Listo! Desde ahora la app se abre con tu huella.":"Listo, pero este celular no permite el candado completo: quedó en modo básico.",out?"ok":"err");
+    setTimeout(()=>openApp(location.hash.slice(1)||"inicio"),900);
+  }catch(e){
+    console.error(e);
+    say(e.name==="NotAllowedError"?"Se canceló o no se reconoció la huella. Toca el botón para intentarlo otra vez.":(e.message||String(e)),"err");
+  }finally{busy(false);}
+}
+
+/* ---------- Abrir con huella ---------- */
+async function unlock(){
+  const c=getCfg(); if(!c) return;
+  busy(true);
+  try{
+    say("Pon tu dedo en el lector…");
+    if(c.mode==="huella"){
+      const out=prfFirst(await assertion(c.id,c.salt));
+      if(!out) throw new Error("El celular no devolvió la llave. Vuelve a intentarlo.");
+      const wk=await wrapKeyFromPrf(out);
+      const raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64d(c.iv)},wk,b64d(c.ct));
+      KEY=await importContentKey(raw);
+    }else{
+      await assertion(c.id,null);
+      KEY=await importContentKey(b64d(c.k));
+    }
+    say('<span class="spin"></span> Abriendo…');
+    await openApp(location.hash.slice(1)||"inicio");
+  }catch(e){
+    console.error(e);
+    if(e.name==="OperationError") say("La llave de la app cambió. Pídele a Natalia el enlace nuevo y toca «Configurar de nuevo».","err");
+    else say(e.name==="NotAllowedError"?"No se reconoció la huella. Toca el botón para intentarlo otra vez.":(e.message||String(e)),"err");
+  }finally{busy(false);}
+}
+
+/* ---------- Mostrar páginas ---------- */
+async function show(name){
+  if(!PAGES[name]) name="inicio";
+  if(!cache[name]) cache[name]=await decryptPage(KEY,name);
+  const v=$("view");
+  v.srcdoc=cache[name];
+  document.title=name==="inicio"?"Consultorio Bendiciones":({vacunas:"Plan de vacunas",manual:"Manual de Rolo",comida:"Comparativa de comida"})[name];
+}
+async function openApp(name){
+  await show(name);
+  document.body.classList.add("open");
+}
+addEventListener("hashchange",()=>{
+  const h=location.hash.slice(1);
+  if(h.startsWith("llave=")){location.reload();return;}
+  if(KEY) show(h).catch(e=>console.error(e));
+});
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){hiddenAt=Date.now();}
+  else if(KEY && hiddenAt && Date.now()-hiddenAt>LOCK_AFTER_MS){location.replace(location.pathname);}
+});
+
+function resetDevice(){
+  if(!confirm("¿Borrar la configuración de este celular? Después necesitarás el enlace de configuración para volver a entrar.")) return;
+  localStorage.removeItem(CFG);location.replace(location.pathname);
+}
+
+/* ---------- Arranque ---------- */
+(function start(){
+  const m=location.hash.match(/^#llave=([A-Za-z0-9_-]{43})/);
+  const c=getCfg();
+  if(m){
+    $("title").textContent="Configurar este celular";
+    $("sub").textContent="Solo se hace una vez. Usa Google Chrome y ten la huella registrada en el celular.";
+    $("fplabel").textContent="Configurar con mi huella";
+    const raw=b64d(m[1]);
+    $("fp").onclick=()=>setup(raw);
+    if(c) say("Este celular ya estaba configurado. Si continúas, se reemplaza la configuración anterior.");
+  }else if(c){
+    $("fp").onclick=unlock;
+    $("small").innerHTML=(c.mode==="basico"?"Modo básico · ":"")+'<button type="button" id="reset">Configurar de nuevo</button>';
+    $("reset").onclick=resetDevice;
+  }else{
+    $("title").textContent="App privada";
+    $("sub").textContent="Este celular todavía no está configurado. Abre el enlace de configuración que te envió Natalia.";
+    $("fp").style.display="none";$("fplabel").style.display="none";
+  }
+})();
+
+if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+</script>
+</body>
+</html>
