@@ -194,12 +194,14 @@ function resetDevice(){
   if(m){
     $("title").textContent="Configurar este celular";
     $("sub").textContent="Solo se hace una vez. Usa Google Chrome y ten la huella registrada en el celular.";
-    $("fplabel").textContent="Configurar con mi huella";
+    $("fplabel").textContent="Toca el círculo para empezar";
+    say("Al tocarlo, el celular te pedirá la huella.");
     const raw=b64d(m[1]);
     $("fp").onclick=()=>setup(raw);
     if(c) say("Este celular ya estaba configurado. Si continúas, se reemplaza la configuración anterior.");
   }else if(c){
     $("fp").onclick=unlock;
+    $("fplabel").textContent="Toca el círculo para abrir";
     $("small").innerHTML=(c.mode==="basico"?"Modo básico · ":"")+'<button type="button" id="reset">Configurar de nuevo</button>';
     $("reset").onclick=resetDevice;
   }else{
