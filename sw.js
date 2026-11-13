@@ -1,5 +1,5 @@
 /* Guarda la app en el celular para que abra sin internet. Siempre intenta primero la versión más nueva. */
-const CACHE="consultorio-v2";
+const CACHE="consultorio-v3";
 const CORE=["./","index.html","manifest.webmanifest","icon-v2-192.png","icon-v2-512.png","img/rolo.webp","img/mateo.webp","data/consultorio.enc","data/vacunas.enc","data/manual.enc","data/comida.enc"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).catch(()=>{}));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
