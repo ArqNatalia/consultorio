@@ -3,52 +3,68 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b0d13">
+<meta name="theme-color" content="#16121f">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Consultorio Bendiciones</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-v2-192.png">
-<link rel="apple-touch-icon" href="icon-v2-192.png">
+<link rel="icon" href="icon-v3-192.png">
+<link rel="apple-touch-icon" href="icon-v3-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap">
 <style>
-:root{--bg:#0b0d13;--ink:#f3f1fa;--ink2:#c9c6d8;--muted:#8e93a6;--line:rgba(255,255,255,.1);--pink:#f7b3cd;--blue:#a8d4f7;--lilac:#cbb8f7;--aqua:#94e6d2;--bad:#f7a8b4;--on:#16131f;color-scheme:dark}
+:root{--gold:#e6cfa6;--gold2:#c4a273;--ink:#f6f2ec;--ink2:rgba(255,255,255,.86);--muted:rgba(255,255,255,.66);--bad:#f7a8b4;--ok:#9fe3b6;--on-gold:#1a1712;--t1:#6b4fa8;--t2:#2f8f7e;--f:"Outfit","Segoe UI",system-ui,sans-serif;color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
-#lock{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px calc(32px + env(safe-area-inset-bottom));text-align:center;position:relative;overflow:hidden}
-#lock::before{content:"";position:absolute;inset:-30%;background:radial-gradient(40% 35% at 30% 30%,rgba(247,179,205,.22),transparent 70%),radial-gradient(40% 35% at 75% 40%,rgba(168,212,247,.2),transparent 70%),radial-gradient(45% 40% at 50% 85%,rgba(203,184,247,.18),transparent 70%);filter:blur(10px);z-index:0}
-#lock>*{position:relative;z-index:1}
-.dogs{display:flex;gap:0;margin-bottom:18px}
-.dogs img{width:96px;height:96px;border-radius:50%;object-fit:cover;background:#1d2230;border:3px solid var(--bg)}
-.dogs img+img{margin-left:-22px}
-h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}
-.sub{color:var(--ink2);margin:0 0 30px;font-size:15px;max-width:320px;line-height:1.45}
-.fp{width:112px;height:112px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--pink),var(--lilac) 55%,var(--blue));color:var(--on);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 40px rgba(203,184,247,.35);transition:transform .15s}
-.fp:active{transform:scale(.95)}
-.fp svg{width:58px;height:58px}
-.fp-label{margin-top:14px;font-weight:700;font-size:16px}
-.msg{margin-top:22px;max-width:330px;font-size:14px;line-height:1.5;color:var(--ink2);min-height:1.5em}
+html,body{margin:0;height:100%;background:#0e0c14;color:var(--ink);font:400 15px/1.5 var(--f);-webkit-font-smoothing:antialiased}
+#lock{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(26px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));text-align:center;position:relative;overflow:hidden;isolation:isolate}
+.bg{position:absolute;inset:0;z-index:-1;overflow:hidden;background:#16121f}
+.bgimg{position:absolute;inset:-18% -25% 30%;background:url(img/rolo.webp) center 30%/cover;filter:blur(48px) saturate(1.5);opacity:.95}
+.tint{position:absolute;inset:0;background:linear-gradient(175deg,color-mix(in srgb,var(--t1) 45%,transparent) 0%,color-mix(in srgb,var(--t2) 55%,transparent) 32%,rgba(22,18,31,.9) 62%,#0e0c14 100%)}
+.lbl{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:500}
+h1{font-size:30px;font-weight:600;letter-spacing:.02em;margin:2px 0 0;line-height:1.15}
+.dogs{flex:1 1 auto;min-height:150px;max-height:min(42dvh,80vw);width:100%;max-width:440px;position:relative;margin:10px 0 6px}
+.dogs img{position:absolute;bottom:0;height:100%;width:auto;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.45))}
+.dogs .r{left:50%;transform:translateX(-78%)}
+.dogs .m{left:50%;transform:translateX(-18%) scale(.84);transform-origin:bottom center}
+.names{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink2);font-weight:400;margin-bottom:18px}
+.names i{font-style:normal;color:var(--gold);margin:0 .5em}
+.glass{background:rgba(255,255,255,.12);backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);border:1px solid rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 30px -14px rgba(0,0,0,.45)}
+.panel{width:auto;min-width:230px;max-width:300px;border-radius:28px;padding:16px 26px 16px;display:flex;flex-direction:column;align-items:center}
+.sub{color:var(--muted);margin:0 0 14px;font-size:13.5px;line-height:1.4;max-width:240px}
+.fp{width:92px;height:92px;border-radius:50%;border:0;padding:0;background:linear-gradient(145deg,var(--gold),var(--gold2));color:var(--on-gold);display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 7px rgba(230,207,166,.16),0 0 0 15px rgba(230,207,166,.07),0 14px 34px -8px rgba(196,162,115,.6);transition:transform .15s;font:inherit}
+.fp:active{transform:scale(.94)}
+.fp svg{width:48px;height:48px}
+.fp-label{margin-top:18px;font-weight:500;font-size:16px;letter-spacing:.01em}
+.msg{margin-top:8px;max-width:310px;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.msg:empty{display:none}
 .msg.err{color:var(--bad)}
-.msg.ok{color:var(--aqua)}
-.small{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom));left:0;right:0;font-size:12px;color:var(--muted)}
-.small button{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;cursor:pointer;padding:6px}
-#view{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg);display:none}
+.msg.ok{color:var(--ok)}
+.small{margin-top:6px;font-size:12px;color:var(--muted)}
+.small:empty{display:none}
+.small button{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font:inherit;cursor:pointer;padding:6px}
+#view{position:fixed;inset:0;width:100%;height:100%;border:0;background:#0e0c14;display:none}
 body.open #lock{display:none}
 body.open #view{display:block}
-.spin{width:22px;height:22px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--ink);border-radius:50%;animation:s 1s linear infinite;display:inline-block;vertical-align:middle}
+.spin{width:20px;height:20px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:s 1s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes s{to{transform:rotate(360deg)}}
+@media (max-height:620px){.dogs{max-height:190px}h1{font-size:25px}.fp{width:78px;height:78px}.fp svg{width:40px;height:40px}}
 </style>
+
 </head>
 <body>
 <main id="lock">
-  <div class="dogs"><img src="img/rolo.webp" alt="Rolo"><img src="img/mateo.webp" alt="Mateo"></div>
-  <h1 id="title">Consultorio</h1>
-  <p class="sub" id="sub">Rolo y Mateo</p>
-  <button class="fp" id="fp" type="button" aria-label="Abrir con huella">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 11v3.5c0 2.2-.6 4.2-1.7 6"/><path d="M8.6 9.4A3.9 3.9 0 0 1 15.9 11v2.4c0 2.6-.5 5-1.5 7.1"/><path d="M5.4 16.6c.4-1 .6-2.1.6-3.2V11a6 6 0 0 1 10-4.5"/><path d="M18 8.6c.6.7 1 1.5 1.1 2.4v2.3c0 1.1-.1 2.2-.3 3.2"/><path d="M3.4 8.5A9 9 0 0 1 18.8 4.9"/><path d="M8.3 20.3c.7-1.5 1.1-3.2 1.1-5V11a2.6 2.6 0 0 1 4.6-1.7"/></svg>
-  </button>
-  <div class="fp-label" id="fplabel">Abrir con huella</div>
-  <div class="msg" id="msg" role="status"></div>
-  <div class="small" id="small"></div>
+  <div class="bg" aria-hidden="true"><div class="bgimg"></div><div class="tint"></div></div>
+  <div class="lbl">Consultorio</div>
+  <h1 id="title">Bendiciones</h1>
+  <div class="dogs" aria-hidden="true"><img class="m" src="img/mateo.webp" alt=""><img class="r" src="img/rolo.webp" alt=""></div>
+  <div class="names">Rolo<i>·</i>Mateo</div>
+  <section class="panel glass">
+    <p class="sub" id="sub">App privada de la familia</p>
+    <button class="fp" id="fp" type="button" aria-label="Abrir con huella"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 11v3.5c0 2.2-.6 4.2-1.7 6"/><path d="M8.6 9.4A3.9 3.9 0 0 1 15.9 11v2.4c0 2.6-.5 5-1.5 7.1"/><path d="M5.4 16.6c.4-1 .6-2.1.6-3.2V11a6 6 0 0 1 10-4.5"/><path d="M18 8.6c.6.7 1 1.5 1.1 2.4v2.3c0 1.1-.1 2.2-.3 3.2"/><path d="M3.4 8.5A9 9 0 0 1 18.8 4.9"/><path d="M8.3 20.3c.7-1.5 1.1-3.2 1.1-5V11a2.6 2.6 0 0 1 4.6-1.7"/></svg></button>
+    <div class="fp-label" id="fplabel">Abrir con huella</div>
+    <div class="msg" id="msg" role="status"></div>
+    <div class="small" id="small"></div>
+  </section>
 </main>
 <iframe id="view" title="Consultorio"></iframe>
 <script>
@@ -192,8 +208,8 @@ function resetDevice(){
   const m=location.hash.match(/^#llave=([A-Za-z0-9_-]{43})/);
   const c=getCfg();
   if(m){
-    $("title").textContent="Configurar este celular";
-    $("sub").textContent="Solo se hace una vez. Usa Google Chrome y ten la huella registrada en el celular.";
+    $("title").textContent="Bendiciones";
+    $("sub").textContent="Configura este celular. Solo se hace una vez, en Google Chrome.";
     $("fplabel").textContent="Toca el círculo para empezar";
     say("Al tocarlo, el celular te pedirá la huella.");
     const raw=b64d(m[1]);
@@ -205,7 +221,7 @@ function resetDevice(){
     $("small").innerHTML=(c.mode==="basico"?"Modo básico · ":"")+'<button type="button" id="reset">Configurar de nuevo</button>';
     $("reset").onclick=resetDevice;
   }else{
-    $("title").textContent="App privada";
+    
     $("sub").textContent="Este celular todavía no está configurado. Abre el enlace de configuración que te envió Natalia.";
     $("fp").style.display="none";$("fplabel").style.display="none";
   }
