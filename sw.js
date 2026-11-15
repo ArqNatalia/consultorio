@@ -1,6 +1,6 @@
 /* Guarda la app en el celular para que abra sin internet. Siempre intenta primero la versión más nueva.
    Fotos y videos van en una caché aparte que no se borra con cada versión: se bajan una sola vez. */
-const CACHE="consultorio-v6", MEDIA="consultorio-media-v1";
+const CACHE="consultorio-v7", MEDIA="consultorio-media-v2";
 const CORE=["./","index.html","manifest.webmanifest","icon-v3-192.png","icon-v3-512.png","img/rolo.webp","img/mateo.webp","data/consultorio.enc","data/vacunas.enc","data/manual.enc","data/comida.enc"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).catch(()=>{}));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE&&k!==MEDIA).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
