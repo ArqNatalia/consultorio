@@ -188,6 +188,11 @@ async function openApp(name){
   await show(name);
   document.body.classList.add("open");
 }
+/* atrás: la página abierta cierra primero su hoja o vista (uiBack); una entrada sobrante se salta */
+addEventListener("popstate",e=>{
+  let h=false; try{const w=$("view").contentWindow; h=!!(w&&w.uiBack&&w.uiBack());}catch(x){}
+  if(!h&&e.state&&e.state.ui) history.back();
+});
 addEventListener("hashchange",()=>{
   const h=location.hash.slice(1);
   if(h.startsWith("llave=")){location.reload();return;}
